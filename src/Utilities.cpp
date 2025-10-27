@@ -92,13 +92,13 @@ std::string truncateText(std::string name, int length, uint quantity)
 	std::stringstream output;
 	
 	if (quantity == 1) {
-		if (name.length() <= length)
+		if (name.length() <= static_cast<size_t>(length))
 			output << name;
 		else
 			output << name.substr(0, length - 3) << "...";
 	} else {
 		// Add quantity indicator (x##) for multiple items
-		if (name.length() <= (length - (4 + digits(quantity)))) {
+		if (name.length() <= static_cast<size_t>(length - (4 + digits(quantity)))) {
 			output << name << " (x" << quantity << ")";
 			
 		} else
@@ -135,16 +135,15 @@ void enterToContinue()
 // Case-insensitive alphabetical comparison: 1 if left < right, -1 if left > right, 0 if equal
 int stringComp(std::string leftComp, std::string rightComp)
 {
-	int i;
 	// Convert to lowercase
-	for (i = 0; i < leftComp.length(); i++)
+	for (size_t i = 0; i < leftComp.length(); i++)
 		leftComp[i] = std::tolower(leftComp[i]);
-	for (i = 0; i < rightComp.length(); i++)
+	for (size_t i = 0; i < rightComp.length(); i++)
 		rightComp[i] = std::tolower(rightComp[i]);
 	
 	// Compare character by character
-	int compLength = std::min(leftComp.length(), rightComp.length());
-	for (i = 0; i < compLength; i++) {
+	size_t compLength = std::min(leftComp.length(), rightComp.length());
+	for (size_t i = 0; i < compLength; i++) {
 		if (leftComp[i] < rightComp[i])
 			return 1;
 		else if (leftComp[i] > rightComp[i])

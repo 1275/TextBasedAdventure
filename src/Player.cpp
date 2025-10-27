@@ -104,7 +104,7 @@ std::string Player::inventoryToString() const
 	std::stringstream output;
 	const uint width = UtilitiesOptions::getScreenWidth();
 	std::multimap<std::string, Item, ItemComp>::const_iterator it;
-	int i, quantity;
+	int quantity;
 
 	for (it = Inventory.begin() ; it != Inventory.end(); it++) {
 		const std::string lastItem = it->first;

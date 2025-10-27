@@ -23,8 +23,8 @@ class Location {
 private:
 	void displayUnknownCommand();  // Show error for invalid commands
 
-	WorldVariables &WorldVars;
 	Player &PC;
+	WorldVariables &WorldVars;
 	std::vector<Action> Actions;  // Available actions at current location
 	
 	std::string getActions();  // Get formatted list of possible actions

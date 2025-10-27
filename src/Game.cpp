@@ -189,6 +189,7 @@ Status Game::loadGame(std::string filename)
 	std::ifstream file(filename.c_str());
 	LOADDATABODY(file, "loadGame")
 	file.close();
+	return Status::OK;  // Macro already returns on error
 }
 
 Status Game::loadDefaultData()
