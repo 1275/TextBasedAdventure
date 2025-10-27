@@ -1,5 +1,6 @@
 #include "Utilities.h"
 
+
 // Default settings for screen display
 unsigned int UtilitiesOptions::screenWidth = 80;
 unsigned int UtilitiesOptions::screenHeight = 24;
@@ -26,51 +27,59 @@ void UtilitiesOptions::loadData(std::string input)
 // Convert Area enum to readable std::string
 std::string areaToString(Area input)
 {
-	switch (input) {
-		case Area::ELFFORMYHOUSEINTERIOR: return "Elffor: my house (interior)";
-		case Area::ELFFORMYHOUSE:			return "Elffor: my house";
-		case Area::ELFFORGATE:			return "Elffor: gate";
-		case Area::ELFFORTAVERN:			return "Elffor: tavern";
-		case Area::ELFFORTAVERNINTERIOR:	return "Elffor: tavern (interior)";
-		case Area::ROADTOELFFORA:			return "Road to Elffor (A)";
-		default:
-			std::cout << "Error: areaToString() received improper input.\n";
-			return "";
+	static const std::unordered_map<Area, std::string> areaNames = {
+		{Area::ELFFORMYHOUSEINTERIOR, "Elffor: my house (interior)"},
+		{Area::ELFFORMYHOUSE, "Elffor: my house"},
+		{Area::ELFFORGATE, "Elffor: gate"},
+		{Area::ELFFORTAVERN, "Elffor: tavern"},
+		{Area::ELFFORTAVERNINTERIOR, "Elffor: tavern (interior)"},
+		{Area::ROADTOELFFORA, "Road to Elffor (A)"}
+	};
+	
+	auto it = areaNames.find(input);
+	if (it != areaNames.end()) {
+		return it->second;
 	}
+	
+	std::cout << "Error: areaToString() received improper input.\n";
+	return "";
 }
 
 // Display text with word wrapping to fit screen width
 void display(std::string input, unsigned int width)
 {
-	const unsigned int screenWidth = (width == 0) ? UtilitiesOptions::getScreenWidth() : width;	
-	unsigned int pos;
-	std::string remainingOutput = input;
-	
-	while (remainingOutput.length() > screenWidth) {
-		pos = remainingOutput.find('\n');
-		// Check for newline within current line
-		if ((pos >= 0) && (pos <= screenWidth)) {
-			std::cout << remainingOutput.substr(0, pos + 1);
-			remainingOutput.erase(0, pos + 1);
-		} else {
-			pos = remainingOutput.find_last_of(' ', screenWidth);
-			// Handle words longer than screen width
-			if ((pos <= 0) || (pos >= screenWidth)) {
-				std::cout << remainingOutput.substr(0, screenWidth);
-				remainingOutput.erase(0, screenWidth);
-				while ((remainingOutput[0] == ' ') && (remainingOutput.length() > 0))
-					remainingOutput.erase(0, 1);
-			} else {
-				// Print words without splitting them across lines
-				std::cout << remainingOutput.substr(0, pos);
-				remainingOutput.erase(0, pos);
-				while ((remainingOutput[0] == ' ') && (remainingOutput.length() > 0))
-					remainingOutput.erase(0, 1);
-			}
-			std::cout << '\n';
-		}
-	}
-	std::cout << remainingOutput;
+    const unsigned int screenWidth = (width == 0) ? UtilitiesOptions::getScreenWidth() : width;
+    size_t start = 0;
+    
+    while (start < input.length()) {
+        // Calculate how much we can print
+        size_t remaining = input.length() - start;
+        size_t end = start + std::min(remaining, static_cast<size_t>(screenWidth));
+        
+        // Check for newline before screen width
+        size_t newlinePos = input.find('\n', start);
+        if (newlinePos != std::string::npos && newlinePos < end) {
+            std::cout << input.substr(start, newlinePos - start + 1);
+            start = newlinePos + 1;
+            continue;
+        }
+        
+        // If we're not at the end, try to break at a space
+        if (end < input.length()) {
+            size_t spacePos = input.find_last_of(' ', end - 1);
+            if (spacePos != std::string::npos && spacePos > start) {
+                end = spacePos;
+            }
+        }
+        
+        std::cout << input.substr(start, end - start) << '\n';
+        
+        // Skip leading spaces on next line
+        start = end;
+        while (start < input.length() && input[start] == ' ') {
+            start++;
+        }
+    }
 }
 
 // Display dialog text and wait for user to continue

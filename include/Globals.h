@@ -14,6 +14,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 // Type aliases
 using uint = unsigned int;

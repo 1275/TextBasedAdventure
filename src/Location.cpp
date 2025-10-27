@@ -13,42 +13,60 @@ Location::Location(Player &PCin, WorldVariables &WorldVarsIn) : PC(PCin), WorldV
 
 void Location::refreshActions()
 {
-	bool waitDefined = false; // Set this variable to true if an area gets its own explicitly defined wait until day/night commands.
-	
+	bool waitDefined = false;
 	Actions.clear();
 	
 	Actions.push_back(Action("observe", observeAction));
-	if (PC.getCurrentLocation() == Area::ELFFORMYHOUSEINTERIOR) {
-		Actions.push_back(Action("leave house", goToElfforMyHouse));
-		Actions.push_back(Action("sleep in bed", ElfforHouseSleepInBed));
-		ADDWAITDAYNIGHT(ElfforHouseWaitUntilDay, ElfforHouseWaitUntilNight);
-	} else if (PC.getCurrentLocation() == Area::ELFFORMYHOUSE) {
-		Actions.push_back(Action("enter house", goToElfforMyHouseInterior));
-		Actions.push_back(Action("go to gate", goToElfforGate));
-		Actions.push_back(Action("go to tavern", goToElfforTavern));
-	} else if (PC.getCurrentLocation() == Area::ELFFORTAVERN) {
-		Actions.push_back(Action("enter tavern", ElfforEnterTavern));
-		Actions.push_back(Action("go to my house", goToElfforMyHouse));
-		Actions.push_back(Action("go to gate", goToElfforGate));
-	} else if (PC.getCurrentLocation() == Area::ELFFORTAVERNINTERIOR) {
-		Actions.push_back(Action("leave tavern", goToElfforTavern));
-		if (WorldVars.IsDay) {
-			Actions.push_back(Action("talk to Trent", ElfforTalkToTrent));
-			Actions.push_back(Action("talk to Nina", ElfforTalktoNina));
-		}
-		ADDWAITDAYNIGHT(ElfforTavernWaitUntilDay, ElfforTavernWaitUntilNight)
-	} else if (PC.getCurrentLocation() == Area::ELFFORGATE) {
-		Actions.push_back(Action("read sign", ElfforReadSign));
-		Actions.push_back(Action("leave town", goToRoadToElfforA));
-		Actions.push_back(Action("go to my house", goToElfforMyHouse));
-		Actions.push_back(Action("go to tavern", goToElfforTavern));
-	} else if (PC.getCurrentLocation() == Area::ROADTOELFFORA) {
-		Actions.push_back(Action("enter Elffor", goToElfforGate));
-		Actions.push_back(Action("go down path", RoadToElfforGoDownPath));
-	} else
-		std::cout << "Error: Location constructor called while PC was in an invalid location.\n";
-	if (! waitDefined) {
-		Actions.push_back(Action("wait until day", waitUntilDay, ! WorldVars.IsDay));
+	
+	const Area currentLocation = PC.getCurrentLocation();
+	
+	switch (currentLocation) {
+		case Area::ELFFORMYHOUSEINTERIOR:
+			Actions.push_back(Action("leave house", goToElfforMyHouse));
+			Actions.push_back(Action("sleep in bed", ElfforHouseSleepInBed));
+			ADDWAITDAYNIGHT(ElfforHouseWaitUntilDay, ElfforHouseWaitUntilNight);
+			break;
+			
+		case Area::ELFFORMYHOUSE:
+			Actions.push_back(Action("enter house", goToElfforMyHouseInterior));
+			Actions.push_back(Action("go to gate", goToElfforGate));
+			Actions.push_back(Action("go to tavern", goToElfforTavern));
+			break;
+			
+		case Area::ELFFORTAVERN:
+			Actions.push_back(Action("enter tavern", ElfforEnterTavern));
+			Actions.push_back(Action("go to my house", goToElfforMyHouse));
+			Actions.push_back(Action("go to gate", goToElfforGate));
+			break;
+			
+		case Area::ELFFORTAVERNINTERIOR:
+			Actions.push_back(Action("leave tavern", goToElfforTavern));
+			if (WorldVars.IsDay) {
+				Actions.push_back(Action("talk to Trent", ElfforTalkToTrent));
+				Actions.push_back(Action("talk to Nina", ElfforTalktoNina));
+			}
+			ADDWAITDAYNIGHT(ElfforTavernWaitUntilDay, ElfforTavernWaitUntilNight);
+			break;
+			
+		case Area::ELFFORGATE:
+			Actions.push_back(Action("read sign", ElfforReadSign));
+			Actions.push_back(Action("leave town", goToRoadToElfforA));
+			Actions.push_back(Action("go to my house", goToElfforMyHouse));
+			Actions.push_back(Action("go to tavern", goToElfforTavern));
+			break;
+			
+		case Area::ROADTOELFFORA:
+			Actions.push_back(Action("enter Elffor", goToElfforGate));
+			Actions.push_back(Action("go down path", RoadToElfforGoDownPath));
+			break;
+			
+		default:
+			std::cout << "Error: Location constructor called while PC was in an invalid location.\n";
+			break;
+	}
+	
+	if (!waitDefined) {
+		Actions.push_back(Action("wait until day", waitUntilDay, !WorldVars.IsDay));
 		Actions.push_back(Action("wait until night", waitUntilNight, WorldVars.IsDay));
 	}
 }
