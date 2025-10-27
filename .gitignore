@@ -1,0 +1,23 @@
+# Build artifacts
+build/
+*.o
+*.h.gch
+
+# Executable
+run
+
+# Editor temporary files
+*~
+*.swp
+*.swo
+.*.swp
+.*.swo
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*
+
+# OS files
+.DS_Store
+Thumbs.db
