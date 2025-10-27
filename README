@@ -1,15 +1,51 @@
-With the first draft of the game's engine now finished, I've started developing the game's world.
+# Text-Based Adventure Game
 
-If you would like to get a feel for the general "architectre" of the code, you should read the files in the following order (or in reverse order if you want to understand it in a top-down way):
-Globals.h
-Utilities.h/.cpp
-Item.h
-Player.h/.cpp
-Menu.h/.cpp
-WorldVariables.h/.cpp
-Action.h/.cpp
-Location.h/.cpp
-Game.h/.cpp
-Main.cpp
+A C++ text-based adventure game engine.
 
-Started on December 5th, 2012.  Many thanks to Mike McG who encouraged me to put this project on GitHub and who encouraged me to not settle for "good enough" when there was room for improvement.  Thanks to Daniel Scanlan, who figured out the cause of a bug that would have killed this project early on had he not caught it.
+## Project Status
+
+The first draft of the game's engine is now finished, and development has moved to creating the game's world.
+
+## Project Structure
+
+```
+├── src/        - Source files (.cpp)
+├── include/    - Header files (.h)
+├── build/      - Build artifacts (generated)
+├── Makefile    - Build configuration
+└── README      - This file
+```
+
+## Building
+
+```bash
+make        # Build the project
+make clean  # Clean build artifacts
+./run       # Run the game
+```
+
+## Code Architecture
+
+To understand the code architecture, read the files in the following order (or reverse for top-down understanding):
+
+1. `include/Globals.h`
+2. `include/Utilities.h` / `src/Utilities.cpp`
+3. `include/Item.h`
+4. `include/Player.h` / `src/Player.cpp`
+5. `include/Menu.h` / `src/Menu.cpp`
+6. `include/WorldVariables.h` / `src/WorldVariables.cpp`
+7. `include/Action.h` / `src/Action.cpp`
+8. `include/Location.h` / `src/Location.cpp`
+9. `include/Game.h` / `src/Game.cpp`
+10. `src/Main.cpp`
+
+## Credits
+
+**Started:** December 5th, 2012
+**Paused until** October 27th, 2025
+
+**Contributors:**
+- **Owen Welsh** ([OwenWelsh](https://github.com/OwenWelsh)) - Original Project Author
+- **Mike McG** - Encouraged putting this project on GitHub and striving for excellence
+- **Daniel Scanlan** - Caught a critical early bug that would have derailed the project
+- **1275** - Created this fork

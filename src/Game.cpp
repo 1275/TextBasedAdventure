@@ -1,11 +1,13 @@
 #include "Game.h"
 #include "Menu.h"
 
+// Constructor - Initialize player and save initial state
 Game::Game() : PC(StartingLocation), LocationVar(PC, WorldVars)
 {
 	saveDefaultData();
 }
 
+// Main game loop - Handle main menu and game start
 void Game::run()
 {
 	int selection;
@@ -29,9 +31,22 @@ void Game::run()
 				display("\nWhat is the name of your save file? (press enter to cancel)\n");
 				getline(cin, filename);
 				
-				testStream.open(filename.c_str());
-				getline(testStream, tester);
 				if (filename != "") {
+					// Verify save file exists and can be opened
+					testStream.open(filename.c_str());
+					if (!testStream.is_open()) {
+						stringstream output;
+						output << "\nSorry, could not open file " << filename << ". Try again.\n";
+						display(output.str());
+						selection = -1;
+						break;
+					}
+					
+					// Read first line to validate file format
+					getline(testStream, tester);
+					testStream.close();
+					
+					// Check if file is a valid save file
 					if (tester != "start_save_file") {
 						stringstream output;
 						output << "\nSorry, " << filename << " is not the name of a valid save file.  Try again.\n";
@@ -39,8 +54,8 @@ void Game::run()
 						selection = -1;
 						break;
 					}
-					testStream.close();
 				
+					// Load game data from file and start playing
 					if (loadGame(filename) == ERROR)
 						cout << "Error: something went wrong with loadGame().\n";
 					else {
@@ -58,22 +73,25 @@ void Game::run()
 	display("\nGood bye! Thanks for playing!\n\n");
 }
 
-#define SAVEDATABODY(file) \
-	file << "start_save_file\n"; \
-	file << UtilitiesOptions::saveData() << PC.saveData() << Menu::saveData() << WorldVars.saveData(); \
+// Helper function to write save data format to any output stream
+void Game::writeSaveData(ostream& file)
+{
+	file << "start_save_file\n";
+	file << UtilitiesOptions::saveData() << PC.saveData() << Menu::saveData() << WorldVars.saveData();
 	file << "end_of_save_file\n";
+}
 
 void Game::saveData(string filename)
 {
 	ofstream file(filename.c_str());
-	SAVEDATABODY(file)
+	writeSaveData(file);
 	file.close();
 }
 
 void Game::saveDefaultData()
 {
 	stringstream strstr;
-	SAVEDATABODY(strstr)
+	writeSaveData(strstr);
 	defaultData = strstr.str();
 }
 
@@ -135,48 +153,75 @@ status Game::saveGame(string &filename)
 	}
 }
 
-#define GETDATAFORLOAD \
-	input.str(""); \
-	do { \
-		getline(file, tempString); \
-		input << tempString << '\n'; \
-	} while (tempString[0] != ENDMARKER);
-
-#define LOADDATABODY(file, FUNCTIONNAME) \
-	string tempString; \
-	getline(file, tempString); \
-	\
-	if (tempString != "start_save_file") { \
-		cout << "Error: " << FUNCTIONNAME << " given improper save file.\n"; \
-		return ERROR; \
-	} \
-	\
-	stringstream input; \
-	GETDATAFORLOAD \
-	UtilitiesOptions::loadData(input.str()); \
-	GETDATAFORLOAD \
-	PC = Player(StartingLocation); \
-	PC.loadData(input.str()); \
-	GETDATAFORLOAD \
-	Menu::loadData(input.str()); \
-	GETDATAFORLOAD \
-	WorldVars.loadData(input.str()); \
-	getline(file, tempString); \
-	if (tempString != "end_of_save_file") \
-		cout << "Error:  a load function didn't reach the end of the savefile.\n"; \
-	return OK;
+// Helper function to read save data format from any input stream
+void Game::readSaveData(istream& file, const string& functionName)
+{
+	string tempString;
+	getline(file, tempString);
 	
+	if (tempString != "start_save_file") {
+		cout << "Error: " << functionName << " given improper save file.\n";
+		return;
+	}
+	
+	stringstream input;
+	
+	// Read UtilitiesOptions data
+	input.str("");
+	do {
+		getline(file, tempString);
+		input << tempString << '\n';
+	} while (tempString[0] != ENDMARKER);
+	UtilitiesOptions::loadData(input.str());
+	
+	// Read Player data
+	input.str("");
+	do {
+		getline(file, tempString);
+		input << tempString << '\n';
+	} while (tempString[0] != ENDMARKER);
+	PC = Player(StartingLocation);
+	PC.loadData(input.str());
+	
+	// Read Menu data
+	input.str("");
+	do {
+		getline(file, tempString);
+		input << tempString << '\n';
+	} while (tempString[0] != ENDMARKER);
+	Menu::loadData(input.str());
+	
+	// Read WorldVariables data
+	input.str("");
+	do {
+		getline(file, tempString);
+		input << tempString << '\n';
+	} while (tempString[0] != ENDMARKER);
+	WorldVars.loadData(input.str());
+	
+	getline(file, tempString);
+	if (tempString != "end_of_save_file")
+		cout << "Error: a load function didn't reach the end of the savefile.\n";
+}
+
 status Game::loadGame(string filename)
 {
 	ifstream file(filename.c_str());
-	LOADDATABODY(file, "loadGame")
+	if (!file.is_open()) {
+		cout << "Error: loadGame could not open file.\n";
+		return ERROR;
+	}
+	
+	readSaveData(file, "loadGame");
 	file.close();
+	return OK;
 }
 
 status Game::loadDefaultData()
 {
 	stringstream file(defaultData);
-	LOADDATABODY(file, "loadDefaultData")
+	readSaveData(file, "loadDefaultData");
+	return OK;
 }
 
 void Game::playGame(string filename)

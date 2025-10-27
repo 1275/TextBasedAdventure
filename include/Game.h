@@ -1,6 +1,11 @@
 #ifndef GAME_H
 #define GAME_H
 
+/**
+ * Game class - Main game controller.
+ * Manages game state, save/load functionality, and game loop.
+ */
+
 #include "Globals.h"
 #include "Utilities.h"
 #include "Location.h"
@@ -11,9 +16,12 @@ private:
 	WorldVariables WorldVars;
 	Location LocationVar;
 	
-	string defaultData;
-	Area lastLocation;
+	string defaultData;  // Stores initial game state
+	Area lastLocation;   // Track location changes
 	
+	// Save/load helpers
+	void writeSaveData(ostream& file);  // Write save data to stream
+	void readSaveData(istream& file, const string& functionName);  // Read save data from stream
 	void saveDefaultData();
 	status loadDefaultData();
 	
@@ -23,7 +31,7 @@ private:
 	void playGame(string filename = "");
 public:
 	Game();
-	void run();
+	void run();  // Main game loop
 };
 
 #endif

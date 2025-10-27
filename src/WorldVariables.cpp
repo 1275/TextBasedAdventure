@@ -1,5 +1,6 @@
 #include "WorldVariables.h"
 
+// Initialize all world state variables to default values
 WorldVariables::WorldVariables()
 {
 	IsDay = true;
@@ -10,6 +11,7 @@ WorldVariables::WorldVariables()
 	RoadToElffor.BattleFought = false;
 }
 
+// Serialize world state for saving
 string WorldVariables::saveData()
 {
 	stringstream output;
@@ -20,12 +22,12 @@ string WorldVariables::saveData()
 	return output.str();
 }
 
-// Use to load data into each variable
+// Helper macro for loading individual variables
 #define IFSUBENDNOTREACHED(variable) \
 	if ((strstr.str())[1] != SUBENDMARKER) \
 		strstr >> variable;
 
-// Use in between each block (but not after the last one)
+// Helper macro for moving between data blocks
 #define IFENDNOTREACHED \
 	if ((strstr.str())[3] != ENDMARKER) \
 		strstr.ignore(2); \

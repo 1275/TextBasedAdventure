@@ -1,10 +1,12 @@
 #include "Menu.h"
 
+// Default menu display settings
 bool Menu::DisplayDescription = true;
 bool Menu::DisplayActions = false;
 
 Menu::Menu(Player &input) : PC(input) {}
 
+// Serialize menu settings
 string Menu::saveData()
 {
 	stringstream output;
@@ -12,6 +14,7 @@ string Menu::saveData()
 	return output.str();
 }
 
+// Load menu settings from save data
 void Menu::loadData(string input)
 {
 	stringstream strstr(input);
@@ -21,6 +24,7 @@ void Menu::loadData(string input)
 	LOADDATACHECK("Menu")	
 }
 
+// Display and handle pause menu
 void Menu::pauseMenu()
 {
 	int selection = 0;

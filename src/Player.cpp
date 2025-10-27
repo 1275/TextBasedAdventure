@@ -1,11 +1,13 @@
 #include "Player.h"
 
+// Constructor - Initialize player at starting location
 Player::Player(Area currentLocationIn)
 {
 	currentLocation = currentLocationIn;
 	isAlive = true;
 }
 
+// Add item(s) to inventory - unique items only added once
 void Player::addToInventory(Item input, uint quantity)
 {
 	if (input.isUnique()) {
@@ -17,6 +19,7 @@ void Player::addToInventory(Item input, uint quantity)
 	}
 }
 
+// Retrieve an item from inventory by name
 Item Player::getItem(string name) const
 {
 	if (isInInventory(name))
@@ -27,6 +30,7 @@ Item Player::getItem(string name) const
 	}
 }
 
+// Check if item is in inventory (by Item object)
 bool Player::isInInventory(Item input) const
 {
 	if (numInInventory(input) > 0)
@@ -35,6 +39,7 @@ bool Player::isInInventory(Item input) const
 		return false;
 }
 
+// Check if item is in inventory (by name)
 bool Player::isInInventory(string name) const
 {
 	if (numInInventory(name) > 0)
@@ -43,16 +48,19 @@ bool Player::isInInventory(string name) const
 		return false;
 }
 
+// Count how many of this item are in inventory (by Item object)
 uint Player::numInInventory(Item input) const
 {
 	return (uint) Inventory.count(input.getName());
 }
 
+// Count how many of this item are in inventory (by name)
 uint Player::numInInventory(string name) const
 {
 	return (uint) Inventory.count(name);
 }
 
+// Remove item(s) from inventory - returns remaining count or -1 if failed
 int Player::removeFromInventory(Item input, uint quantity)
 {
 	uint count = (uint) numInInventory(input);
@@ -87,6 +95,7 @@ int Player::removeFromInventory(string name, uint quantity)
 	}
 }
 
+// Convert inventory to formatted string for display
 string Player::inventoryToString() const
 {	
 	if (Inventory.empty())
@@ -100,7 +109,8 @@ string Player::inventoryToString() const
 	for (it = Inventory.begin() ; it != Inventory.end(); it++) {
 		const string lastItem = it->first;
 		
-		quantity = 0; // This block counts the number of repeats by iterating through the map.  It leaves the iterator on the last copy of the item currently being processed.
+		// Count repeats of current item
+		quantity = 0;
 		while (it != Inventory.end()) {
 			if (it->first == lastItem) {
 				quantity++;
@@ -118,11 +128,13 @@ string Player::inventoryToString() const
 	return output.str();
 }
 
+// Serialize player data for saving
 string Player::saveData()
 {
 	stringstream output;
 	output << currentLocation << '\n';
 	
+	// Save each inventory item
 	multimap<string, Item, ItemComp>::const_iterator it;
 	for (it = Inventory.begin() ; it != Inventory.end(); it++)
 		output << (it->second).getName() << '\n' << (it->second).isUnique() << '\n' << (it->second).getDescription() << '\n';
@@ -131,6 +143,7 @@ string Player::saveData()
 	return output.str();
 }
 
+// Load player data from saved game
 void Player::loadData(string input)
 {
 	stringstream strstr(input);
