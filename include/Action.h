@@ -3,7 +3,7 @@
 
 /**
  * Action class - Represents player actions in the game.
- * Actions are commands that can be executed with associated function pointers.
+ * Actions are commands that can be executed with associated function callbacks.
  */
 
 #include "Globals.h"
@@ -14,50 +14,49 @@
 class Action {
 private:
 	std::string command;      // Text command for this action
-	bool showAction;     // Whether to display this action to the player
-	void (*funcPtr)(Player&, WorldVariables&, bool&);  // Function to execute
+	bool showAction;          // Whether to display this action to the player
+	std::function<void(Player&, WorldVariables&, bool&)> callback;  // Modern function wrapper
+	
 public:
-	Action(std::string commandIn, void (*funcPtrIn)(Player&, WorldVariables&, bool&), bool showActionIn = true) : command(commandIn), showAction(showActionIn), funcPtr(funcPtrIn) {}
-	std::string getCommand(){return command;}
-	bool getShowAction(){return showAction;}
-	void callAction(Player &PC, WorldVariables &WorldVars){(*funcPtr)(PC, WorldVars, showAction);}
+	Action(std::string commandIn, 
+	       std::function<void(Player&, WorldVariables&, bool&)> callbackIn, 
+	       bool showActionIn = true) 
+		: command(commandIn), showAction(showActionIn), callback(callbackIn) {}
+	
+	std::string getCommand() const { return command; }
+	bool getShowAction() const { return showAction; }
+	void callAction(Player &PC, WorldVariables &WorldVars) { callback(PC, WorldVars, showAction); }
 };
 
-// Macro for defining action functions
-#define FUNCACTION(NAME) void NAME(Player &PC, WorldVariables &WorldVars, bool &showAction) 
+// Type alias for action function signatures (cleaner than macro)
+using ActionFunc = void(*)(Player&, WorldVariables&, bool&);
 
-// Navigation actions
-FUNCACTION(goToElfforMyHouseInterior);
-FUNCACTION(goToElfforMyHouse);
-FUNCACTION(goToElfforTavern);
-FUNCACTION(goToElfforTavernInterior);
-FUNCACTION(goToElfforGate);
-FUNCACTION(goToRoadToElfforA);
+// ============================================================================
+// ACTION FUNCTIONS 
+// ============================================================================
 
-// Time actions
-FUNCACTION(waitUntilDay);
-FUNCACTION(waitUntilNight);
+// Generic actions
+void observeAction(Player &PC, WorldVariables &WorldVars, bool &showAction);
+void waitUntilDay(Player &PC, WorldVariables &WorldVars, bool &showAction);
+void waitUntilNight(Player &PC, WorldVariables &WorldVars, bool &showAction);
 
-// Observation actions
-FUNCACTION(observeAction);
-FUNCACTION(observeElfforMyHouseInterior);
-FUNCACTION(observeElfforMyHouse);
-FUNCACTION(observeElfforGate);
-FUNCACTION(observeElfforTavern);
-FUNCACTION(observeElfforTavernInterior);
-FUNCACTION(observeRoadToElfforA);
+// Elffor - My House
+void ElfforHouseSleepInBed(Player &PC, WorldVariables &WorldVars, bool &showAction);
+void ElfforHouseWaitUntilDay(Player &PC, WorldVariables &WorldVars, bool &showAction);
+void ElfforHouseWaitUntilNight(Player &PC, WorldVariables &WorldVars, bool &showAction);
 
-// Location-specific actions
-FUNCACTION(ElfforHouseSleepInBed);
-FUNCACTION(ElfforHouseWaitUntilDay);
-FUNCACTION(ElfforHouseWaitUntilNight);
-FUNCACTION(ElfforReadSign);
-FUNCACTION(ElfforEnterTavern);
-FUNCACTION(ElfforTalkToTrent);
-FUNCACTION(ElfforTalktoNina);
-FUNCACTION(ElfforTavernWaitUntilDay);
-FUNCACTION(ElfforTavernWaitUntilNight);
-FUNCACTION(EnterElffor);
-FUNCACTION(RoadToElfforGoDownPath);
+// Elffor - Gate
+void ElfforReadSign(Player &PC, WorldVariables &WorldVars, bool &showAction);
+void EnterElffor(Player &PC, WorldVariables &WorldVars, bool &showAction);
+
+// Elffor - Tavern
+void ElfforEnterTavern(Player &PC, WorldVariables &WorldVars, bool &showAction);
+void ElfforTalkToTrent(Player &PC, WorldVariables &WorldVars, bool &showAction);
+void ElfforTalktoNina(Player &PC, WorldVariables &WorldVars, bool &showAction);
+void ElfforTavernWaitUntilDay(Player &PC, WorldVariables &WorldVars, bool &showAction);
+void ElfforTavernWaitUntilNight(Player &PC, WorldVariables &WorldVars, bool &showAction);
+
+// Road to Elffor
+void RoadToElfforGoDownPath(Player &PC, WorldVariables &WorldVars, bool &showAction);
 
 #endif

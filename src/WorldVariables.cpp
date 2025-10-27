@@ -15,35 +15,51 @@ WorldVariables::WorldVariables()
 std::string WorldVariables::saveData()
 {
 	std::stringstream output;
+	
+	// Day/night state
 	output << IsDay << ' ' << SUBENDMARKER << ' ';
-	output << Elffor.SwordRetrieved << ' ' << Elffor.NinaConversationHad << ' ' << SUBENDMARKER << ' ';
-	output << RoadToElffor.BattleFought << ' ' << SUBENDMARKER << '\n';
+	
+	// Elffor location data
+	output << Elffor.SwordRetrieved << ' ' 
+	       << Elffor.NinaConversationHad << ' ' 
+	       << SUBENDMARKER << ' ';
+	
+	// Road to Elffor data
+	output << RoadToElffor.BattleFought << ' ' 
+	       << SUBENDMARKER << '\n';
+	
+	// End marker
 	output << ENDMARKER << '\n';
+	
 	return output.str();
 }
 
-// Helper macro for loading individual variables
-#define IFSUBENDNOTREACHED(variable) \
-	if ((strstr.str())[1] != SUBENDMARKER) \
-		strstr >> variable;
-
-// Helper macro for moving between data blocks
-#define IFENDNOTREACHED \
-	if ((strstr.str())[3] != ENDMARKER) \
-		strstr.ignore(2); \
-	else \
-		return;
-
+// Deserialize world state from save file
 void WorldVariables::loadData(std::string input)
 {
 	std::stringstream strstr(input);
-	IFSUBENDNOTREACHED(IsDay)
-	IFENDNOTREACHED
-	IFSUBENDNOTREACHED(Elffor.SwordRetrieved)
-	IFSUBENDNOTREACHED(Elffor.NinaConversationHad)
-	IFENDNOTREACHED
-	IFSUBENDNOTREACHED(RoadToElffor.BattleFought)
-
-	strstr.ignore(3);
-	LOADDATACHECK("WorldVariables")
+	char marker;
+	
+	// Load day/night state
+	if (strstr >> IsDay >> marker && marker != SUBENDMARKER) {
+		std::cout << "Error: Invalid format in WorldVariables (IsDay section).\n";
+		return;
+	}
+	
+	// Load Elffor location data
+	if (strstr >> Elffor.SwordRetrieved >> Elffor.NinaConversationHad >> marker && marker != SUBENDMARKER) {
+		std::cout << "Error: Invalid format in WorldVariables (Elffor section).\n";
+		return;
+	}
+	
+	// Load Road to Elffor data
+	if (strstr >> RoadToElffor.BattleFought >> marker && marker != SUBENDMARKER) {
+		std::cout << "Error: Invalid format in WorldVariables (RoadToElffor section).\n";
+		return;
+	}
+	
+	// Verify end marker
+	if (strstr >> marker && marker != ENDMARKER) {
+		std::cout << "Error: Something went wrong with WorldVariables::loadData().\n";
+	}
 }

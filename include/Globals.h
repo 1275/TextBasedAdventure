@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <functional>
 
 // Type aliases
 using uint = unsigned int;
