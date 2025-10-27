@@ -25,8 +25,8 @@ public:
 	static bool getDisplayDescription(){return DisplayDescription;}
 	static bool getDisplayActions(){return DisplayActions;}
 	
-	static string saveData();
-	static void loadData(string input);
+	static std::string saveData();
+	static void loadData(std::string input);
 };
 
 #endif

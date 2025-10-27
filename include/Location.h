@@ -6,7 +6,7 @@
  * Handles action display, command processing, and location descriptions.
  * 
  * To add a new location:
- *   - Add to Area enum in Globals.h (before AREAENDMARKER)
+ *   - Add to Area enum in Globals.h (before Area::AREAENDMARKER)
  *   - Add to areaToString() in Utilities.cpp
  *   - Add static variables to WorldVariables in WorldVariables.h
  *   - Add to all functions in WorldVariables.cpp
@@ -25,16 +25,16 @@ private:
 
 	WorldVariables &WorldVars;
 	Player &PC;
-	vector<Action> Actions;  // Available actions at current location
+	std::vector<Action> Actions;  // Available actions at current location
 	
-	string getActions();  // Get formatted list of possible actions
+	std::string getActions();  // Get formatted list of possible actions
 public:
 	Location(Player &PCin, WorldVariables &WorldVarsIn);
 
 	Area getArea(){return PC.getCurrentLocation();}
 	void refreshActions();     // Update available actions based on game state
 	void displayActions();     // Show all possible actions to player
-	void getCommand(string input);  // Process player command
+	void getCommand(std::string input);  // Process player command
 	void displayDescription(); // Show area description
 };
 

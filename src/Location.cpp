@@ -18,48 +18,48 @@ void Location::refreshActions()
 	Actions.clear();
 	
 	Actions.push_back(Action("observe", observeAction));
-	if (PC.getCurrentLocation() == ELFFORMYHOUSEINTERIOR) {
+	if (PC.getCurrentLocation() == Area::ELFFORMYHOUSEINTERIOR) {
 		Actions.push_back(Action("leave house", goToElfforMyHouse));
 		Actions.push_back(Action("sleep in bed", ElfforHouseSleepInBed));
 		ADDWAITDAYNIGHT(ElfforHouseWaitUntilDay, ElfforHouseWaitUntilNight);
-	} else if (PC.getCurrentLocation() == ELFFORMYHOUSE) {
+	} else if (PC.getCurrentLocation() == Area::ELFFORMYHOUSE) {
 		Actions.push_back(Action("enter house", goToElfforMyHouseInterior));
 		Actions.push_back(Action("go to gate", goToElfforGate));
 		Actions.push_back(Action("go to tavern", goToElfforTavern));
-	} else if (PC.getCurrentLocation() == ELFFORTAVERN) {
+	} else if (PC.getCurrentLocation() == Area::ELFFORTAVERN) {
 		Actions.push_back(Action("enter tavern", ElfforEnterTavern));
 		Actions.push_back(Action("go to my house", goToElfforMyHouse));
 		Actions.push_back(Action("go to gate", goToElfforGate));
-	} else if (PC.getCurrentLocation() == ELFFORTAVERNINTERIOR) {
+	} else if (PC.getCurrentLocation() == Area::ELFFORTAVERNINTERIOR) {
 		Actions.push_back(Action("leave tavern", goToElfforTavern));
 		if (WorldVars.IsDay) {
 			Actions.push_back(Action("talk to Trent", ElfforTalkToTrent));
 			Actions.push_back(Action("talk to Nina", ElfforTalktoNina));
 		}
 		ADDWAITDAYNIGHT(ElfforTavernWaitUntilDay, ElfforTavernWaitUntilNight)
-	} else if (PC.getCurrentLocation() == ELFFORGATE) {
+	} else if (PC.getCurrentLocation() == Area::ELFFORGATE) {
 		Actions.push_back(Action("read sign", ElfforReadSign));
 		Actions.push_back(Action("leave town", goToRoadToElfforA));
 		Actions.push_back(Action("go to my house", goToElfforMyHouse));
 		Actions.push_back(Action("go to tavern", goToElfforTavern));
-	} else if (PC.getCurrentLocation() == ROADTOELFFORA) {
+	} else if (PC.getCurrentLocation() == Area::ROADTOELFFORA) {
 		Actions.push_back(Action("enter Elffor", goToElfforGate));
 		Actions.push_back(Action("go down path", RoadToElfforGoDownPath));
 	} else
-		cout << "Error: Location constructor called while PC was in an invalid location.\n";
+		std::cout << "Error: Location constructor called while PC was in an invalid location.\n";
 	if (! waitDefined) {
 		Actions.push_back(Action("wait until day", waitUntilDay, ! WorldVars.IsDay));
 		Actions.push_back(Action("wait until night", waitUntilNight, WorldVars.IsDay));
 	}
 }
 
-void Location::getCommand(string input)
+void Location::getCommand(std::string input)
 {
 	if (input == "actions") {
 		if (Menu::getDisplayActions() == false)
 			displayActions();
 	} else {
-		vector<Action>::iterator it;
+		std::vector<Action>::iterator it;
 		for (it = Actions.begin(); it != Actions.end(); it++) {
 			if (input == it->getCommand()) {
 				it->callAction(PC, WorldVars);
@@ -75,27 +75,27 @@ void Location::getCommand(string input)
 // Put a space before all displayed actions.
 void Location::displayActions()
 {
-	stringstream output;
+	std::stringstream output;
 	output << "Your possible actions are:\n" << getActions() << " menu\n save\n quit\n";
 	display(output.str());
 }
 
 void Location::displayDescription()
 {
-	vector<Action>::iterator it;
+	std::vector<Action>::iterator it;
 	for (it = Actions.begin(); it != Actions.end(); it++) {
 		if (it->getCommand() == "observe") {
 			it->callAction(PC, WorldVars);
 			return;
 		}
 	}
-	cout << "Error: " << areaToString(getArea()) << " doesn't have a devined observe function.\n";
+	std::cout << "Error: " << areaToString(getArea()) << " doesn't have a defined observe function.\n";
 }
 
-string Location::getActions()
+std::string Location::getActions()
 {
-	stringstream output;
-	vector<Action>::iterator it;
+	std::stringstream output;
+	std::vector<Action>::iterator it;
 	for (it = Actions.begin(); it != Actions.end(); it++) {
 		if (it->getShowAction())
 			output << ' ' << it->getCommand() << '\n';

@@ -11,13 +11,13 @@
 
 class Item {
 private:
-	const string name;
-	const string description;
+	const std::string name;
+	const std::string description;
 	const bool unique;  // If true, only one instance allowed in inventory
 public:
-	Item(string nameIn, string descriptionIn, bool uniqueIn = false) : name(nameIn), description(descriptionIn), unique(uniqueIn) {}
-	string getName() const {return name;}
-	string getDescription() const {return description;}
+	Item(std::string nameIn, std::string descriptionIn, bool uniqueIn = false) : name(nameIn), description(descriptionIn), unique(uniqueIn) {}
+	std::string getName() const {return name;}
+	std::string getDescription() const {return description;}
 	bool isUnique() const {return unique;}
 };
 

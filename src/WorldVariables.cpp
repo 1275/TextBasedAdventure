@@ -12,9 +12,9 @@ WorldVariables::WorldVariables()
 }
 
 // Serialize world state for saving
-string WorldVariables::saveData()
+std::string WorldVariables::saveData()
 {
-	stringstream output;
+	std::stringstream output;
 	output << IsDay << ' ' << SUBENDMARKER << ' ';
 	output << Elffor.SwordRetrieved << ' ' << Elffor.NinaConversationHad << ' ' << SUBENDMARKER << ' ';
 	output << RoadToElffor.BattleFought << ' ' << SUBENDMARKER << '\n';
@@ -34,9 +34,9 @@ string WorldVariables::saveData()
 	else \
 		return;
 
-void WorldVariables::loadData(string input)
+void WorldVariables::loadData(std::string input)
 {
-	stringstream strstr(input);
+	std::stringstream strstr(input);
 	IFSUBENDNOTREACHED(IsDay)
 	IFENDNOTREACHED
 	IFSUBENDNOTREACHED(Elffor.SwordRetrieved)

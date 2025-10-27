@@ -7,17 +7,17 @@ bool Menu::DisplayActions = false;
 Menu::Menu(Player &input) : PC(input) {}
 
 // Serialize menu settings
-string Menu::saveData()
+std::string Menu::saveData()
 {
-	stringstream output;
+	std::stringstream output;
 	output << DisplayDescription << ' ' << DisplayActions << '\n' << ENDMARKER << '\n';
 	return output.str();
 }
 
 // Load menu settings from save data
-void Menu::loadData(string input)
+void Menu::loadData(std::string input)
 {
-	stringstream strstr(input);
+	std::stringstream strstr(input);
 	strstr >> DisplayDescription >> DisplayActions;
 	
 	strstr.ignore(1);
@@ -44,19 +44,19 @@ void Menu::pauseMenu()
 				display("Invalid selection.  Try again.\n");
 		}
 		if (selection != 0)
-			cout << '\n';
+			std::cout << '\n';
 	} while (selection != 0);
 }
 
 void Menu::inventoryMenu()
 {
 	int selectionNum;
-	string selectionString;
-	const string selections = " 1. See all items.\n 2. Examine item.\n 3. Remove item.\n 0. Return to main menu.\n";
+	std::string selectionString;
+	const std::string selections = " 1. See all items.\n 2. Examine item.\n 3. Remove item.\n 0. Return to main menu.\n";
 	
-	cout << "\nInventory:\n" << PC.inventoryToString();
+	std::cout << "\nInventory:\n" << PC.inventoryToString();
 	if (! PC.emptyInventory())
-		cout << '\n';
+		std::cout << '\n';
 	else
 		return;
 
@@ -65,14 +65,14 @@ void Menu::inventoryMenu()
 		selectionNum = getSelection();
 		switch (selectionNum) {
 			case 1:
-				cout << "\nInventory:\n" << PC.inventoryToString();
+				std::cout << "\nInventory:\n" << PC.inventoryToString();
 				break;
 			case 2:
 				display("Which item do you want to examine?\n");
-				getline(cin, selectionString);
+				std::getline(std::cin, selectionString);
 				if (PC.isInInventory(selectionString)) {
 					Item temp = PC.getItem(selectionString);
-					stringstream output;
+					std::stringstream output;
 					output << "\nName:  " << temp.getName() << '\n';
 					if (temp.isUnique())
 						output << "(unique)\n";
@@ -83,12 +83,12 @@ void Menu::inventoryMenu()
 				break;
 			case 3:
 				display("Which item do you want to remove?\n");
-				getline(cin, selectionString);
+				std::getline(std::cin, selectionString);
 				if (PC.isInInventory(selectionString)) {
 					if ((PC.getItem(selectionString)).isUnique())
 						display("You can't remove that item from your inventory.\n");
 					else {
-						string output = "Are you sure you want to remove ";
+						std::string output = "Are you sure you want to remove ";
 						output += selectionString;
 						output += " from your inventory? (1. Yes.  0. No)\n";
 						display(output);
@@ -108,20 +108,20 @@ void Menu::inventoryMenu()
 			case 0:
 				break;
 			default:
-				cout << "Invalid selection.  Try again.\n";
+				std::cout << "Invalid selection.  Try again.\n";
 		}
 		
 		if (selectionNum != 0)
-			cout << '\n';
+			std::cout << '\n';
 	} while ((selectionNum != 0) && (! PC.emptyInventory()));
 }
 
 void Menu::optionsMenu()
 {
 	int selection;
-	cout << '\n';
+	std::cout << '\n';
 	do {
-		stringstream output;
+		std::stringstream output;
 		output << "Options menu:\n 1. Always display area discription after moving:  " << OnOff(DisplayDescription)
 			<< "\n 2. Always display actions on a new turn:  " << OnOff(DisplayActions)
 			<< "\n 3. Show item descriptions in inventory screen:  " << OnOff(UtilitiesOptions::getDisplayItemDescriptions())
@@ -155,24 +155,24 @@ void Menu::optionsMenu()
 				break;
 			case 4:
 				int input;
-				cout << "\nEnter screen width:\n";
+				std::cout << "\nEnter screen width:\n";
 				input = getSelection();
 				if (input < 80)
-					cout << "Screen width too short.\n";
+					std::cout << "Screen width too short.\n";
 				else
 					UtilitiesOptions::setScreenWidth((unsigned int) input);
-				cout << "Enter screen height:\n";
+				std::cout << "Enter screen height:\n";
 				input = getSelection();
 				if (input < 24)
-					cout << "Screen height too short.\n";
+					std::cout << "Screen height too short.\n";
 				else
 					UtilitiesOptions::setScreenHeight((unsigned int) input);
-				cout << "Screen dimensions set to " << UtilitiesOptions::getScreenWidth() << 'x' << UtilitiesOptions::getScreenHeight() << ".\n";
+				std::cout << "Screen dimensions set to " << UtilitiesOptions::getScreenWidth() << 'x' << UtilitiesOptions::getScreenHeight() << ".\n";
 				break;
 			default:
-				cout << "Invalid selection.  Try again.\n";
+				std::cout << "Invalid selection.  Try again.\n";
 		}
 		if (selection != 0)
-			cout << '\n';
+			std::cout << '\n';
 	} while (selection != 0);
 }

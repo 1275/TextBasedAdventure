@@ -1,34 +1,59 @@
+/**
+ * Global definitions, constants, and types used throughout the game.
+ * This header is included by most source files.
+ */
+
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-// Putting all the libraries I use here so I don't have to worry about whether they were included in a previous file or not as I write the code.
+// Standard library includes
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <string>
 #include <vector>
-#include <math.h>
 
-using namespace std;
+// Type aliases
+using uint = unsigned int;
 
-typedef unsigned int uint;
+// Game areas/locations
+enum class Area {
+	TERMINATE = -1,
+	AREASTARTMARKER,
+	ELFFORMYHOUSEINTERIOR,
+	ELFFORMYHOUSE,
+	ELFFORGATE,
+	ELFFORTAVERN,
+	ELFFORTAVERNINTERIOR,
+	ROADTOELFFORA,
+	AREAENDMARKER
+};
 
-#define OnOff(X) (X ? "On" : "Off") // Takes a bool and turns it into an "On" output or an "Off" output.  Used in menus.
+constexpr Area StartingLocation = Area::ELFFORMYHOUSEINTERIOR;
 
-enum Area {TERMINATE = -1, AREASTARTMARKER, ELFFORMYHOUSEINTERIOR, ELFFORMYHOUSE, ELFFORGATE, ELFFORTAVERN, ELFFORTAVERNINTERIOR, ROADTOELFFORA, AREAENDMARKER};
-#define StartingLocation ELFFORMYHOUSEINTERIOR // Defines the area the game will start you in.
+// Status codes for operations
+enum class Status {
+	ERROR = 0,
+	OK = 1
+};
 
-enum status {OK = 1, ERROR = 0};
+// Save file format markers
+constexpr char ENDMARKER = '%';
+constexpr char SUBENDMARKER = '$';
 
-#define ENDMARKER '%' // Defines the character used to mark the end of a line/block of saved data.
-#define SUBENDMARKER '$'
+// Helper function for menu display (converts bool to "On"/"Off")
+inline const char* OnOff(bool value) {
+	return value ? "On" : "Off";
+}
 
-// Place at the end of every load function, with CLASSNAME being a string that is the class's name.  Depends on the stringstream being named strstr.
+// Validation macro for load functions (checks for proper end marker)
+// Note: Assumes std::stringstream variable named 'strstr' exists in scope
 #define LOADDATACHECK(CLASSNAME) \
 	char endTest; \
 	strstr >> endTest; \
 	if (endTest != ENDMARKER) \
-		cout << "Error: Something went wrong with " << CLASSNAME << "::loadData().\n";
+		std::cout << "Error: Something went wrong with " << CLASSNAME << "::loadData().\n";
 
 #endif

@@ -13,12 +13,12 @@
 
 class Action {
 private:
-	string command;      // Text command for this action
+	std::string command;      // Text command for this action
 	bool showAction;     // Whether to display this action to the player
 	void (*funcPtr)(Player&, WorldVariables&, bool&);  // Function to execute
 public:
-	Action(string commandIn, void (*funcPtrIn)(Player&, WorldVariables&, bool&), bool showActionIn = true) : command(commandIn), showAction(showActionIn), funcPtr(funcPtrIn) {}
-	string getCommand(){return command;}
+	Action(std::string commandIn, void (*funcPtrIn)(Player&, WorldVariables&, bool&), bool showActionIn = true) : command(commandIn), showAction(showActionIn), funcPtr(funcPtrIn) {}
+	std::string getCommand(){return command;}
 	bool getShowAction(){return showAction;}
 	void callAction(Player &PC, WorldVariables &WorldVars){(*funcPtr)(PC, WorldVars, showAction);}
 };

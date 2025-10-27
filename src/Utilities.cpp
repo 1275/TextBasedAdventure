@@ -7,89 +7,89 @@ bool UtilitiesOptions::displayItemDescriptions = false;
 bool DialogStruct::DialogEngaged = false;
 
 // Serialize utilities options for saving
-string UtilitiesOptions::saveData()
+std::string UtilitiesOptions::saveData()
 {
-	stringstream output;
+	std::stringstream output;
 	output << screenWidth << ' ' << screenHeight << ' ' << displayItemDescriptions << '\n' << ENDMARKER << '\n';
 	return output.str();
 }
 
 // Load utilities options from saved data
-void UtilitiesOptions::loadData(string input)
+void UtilitiesOptions::loadData(std::string input)
 {	
-	stringstream strstr(input);
+	std::stringstream strstr(input);
 	strstr >> screenWidth >> screenHeight >> displayItemDescriptions;
 	
 	LOADDATACHECK("UtilitiesOptions")
 }
 
-// Convert Area enum to readable string
-string areaToString(Area input)
+// Convert Area enum to readable std::string
+std::string areaToString(Area input)
 {
 	switch (input) {
-		case ELFFORMYHOUSEINTERIOR: return "Elffor: my house (interior)";
-		case ELFFORMYHOUSE:			return "Elffor: my house";
-		case ELFFORGATE:			return "Elffor: gate";
-		case ELFFORTAVERN:			return "Elffor: tavern";
-		case ELFFORTAVERNINTERIOR:	return "Elffor: tavern (interior)";
-		case ROADTOELFFORA:			return "Road to Elffor (A)";
+		case Area::ELFFORMYHOUSEINTERIOR: return "Elffor: my house (interior)";
+		case Area::ELFFORMYHOUSE:			return "Elffor: my house";
+		case Area::ELFFORGATE:			return "Elffor: gate";
+		case Area::ELFFORTAVERN:			return "Elffor: tavern";
+		case Area::ELFFORTAVERNINTERIOR:	return "Elffor: tavern (interior)";
+		case Area::ROADTOELFFORA:			return "Road to Elffor (A)";
 		default:
-			cout << "Error: areaToString() received improper input.\n";
+			std::cout << "Error: areaToString() received improper input.\n";
 			return "";
 	}
 }
 
 // Display text with word wrapping to fit screen width
-void display(string input, unsigned int width)
+void display(std::string input, unsigned int width)
 {
 	const unsigned int screenWidth = (width == 0) ? UtilitiesOptions::getScreenWidth() : width;	
 	unsigned int pos;
-	string remainingOutput = input;
+	std::string remainingOutput = input;
 	
 	while (remainingOutput.length() > screenWidth) {
 		pos = remainingOutput.find('\n');
 		// Check for newline within current line
 		if ((pos >= 0) && (pos <= screenWidth)) {
-			cout << remainingOutput.substr(0, pos + 1);
+			std::cout << remainingOutput.substr(0, pos + 1);
 			remainingOutput.erase(0, pos + 1);
 		} else {
 			pos = remainingOutput.find_last_of(' ', screenWidth);
 			// Handle words longer than screen width
 			if ((pos <= 0) || (pos >= screenWidth)) {
-				cout << remainingOutput.substr(0, screenWidth);
+				std::cout << remainingOutput.substr(0, screenWidth);
 				remainingOutput.erase(0, screenWidth);
 				while ((remainingOutput[0] == ' ') && (remainingOutput.length() > 0))
 					remainingOutput.erase(0, 1);
 			} else {
 				// Print words without splitting them across lines
-				cout << remainingOutput.substr(0, pos);
+				std::cout << remainingOutput.substr(0, pos);
 				remainingOutput.erase(0, pos);
 				while ((remainingOutput[0] == ' ') && (remainingOutput.length() > 0))
 					remainingOutput.erase(0, 1);
 			}
-			cout << '\n';
+			std::cout << '\n';
 		}
 	}
-	cout << remainingOutput;
+	std::cout << remainingOutput;
 }
 
 // Display dialog text and wait for user to continue
-void dialog(string input)
+void dialog(std::string input)
 {
 	if (DialogStruct::DialogEngaged)
-		cout << '\n';
+		std::cout << '\n';
 	else
 		DialogStruct::DialogEngaged = true;
 	
 	display(input);
-	cout << '\n';
+	std::cout << '\n';
 	enterToContinue();
 }
 
 // Truncate text to specified length, adding "..." if needed
-string truncateText(string name, int length, uint quantity)
+std::string truncateText(std::string name, int length, uint quantity)
 {
-	stringstream output;
+	std::stringstream output;
 	
 	if (quantity == 1) {
 		if (name.length() <= length)
@@ -112,10 +112,10 @@ string truncateText(string name, int length, uint quantity)
 int getSelection()
 {
 	int selection;
-	string input;
+	std::string input;
 	
-	getline(cin, input);
-	stringstream strstr(input);
+	std::getline(std::cin, input);
+	std::stringstream strstr(input);
 	strstr >> selection;
 	
 	if (!strstr)
@@ -127,23 +127,23 @@ int getSelection()
 // Wait for user to press enter
 void enterToContinue()
 {
-	string temp;
+	std::string temp;
 	display("\n(press enter to continue)");
-	getline(cin, temp);
+	std::getline(std::cin, temp);
 }
 
 // Case-insensitive alphabetical comparison: 1 if left < right, -1 if left > right, 0 if equal
-int stringComp(string leftComp, string rightComp)
+int stringComp(std::string leftComp, std::string rightComp)
 {
 	int i;
 	// Convert to lowercase
 	for (i = 0; i < leftComp.length(); i++)
-		leftComp[i] = tolower(leftComp[i]);
+		leftComp[i] = std::tolower(leftComp[i]);
 	for (i = 0; i < rightComp.length(); i++)
-		rightComp[i] = tolower(rightComp[i]);
+		rightComp[i] = std::tolower(rightComp[i]);
 	
 	// Compare character by character
-	int compLength = min(leftComp.length(), rightComp.length());
+	int compLength = std::min(leftComp.length(), rightComp.length());
 	for (i = 0; i < compLength; i++) {
 		if (leftComp[i] < rightComp[i])
 			return 1;
@@ -151,7 +151,7 @@ int stringComp(string leftComp, string rightComp)
 			return -1;
 	}
 	
-	// If all characters match, shorter string comes first
+	// If all characters match, shorter std::string comes first
 	if (leftComp.length() < rightComp.length())
 		return 1;
 	else if (leftComp.length() > rightComp.length())

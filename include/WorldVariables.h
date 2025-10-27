@@ -24,8 +24,8 @@ struct WorldVariables {
 	} RoadToElffor;
 	
 	WorldVariables();
-	string saveData();
-	void loadData(string input);
+	std::string saveData();
+	void loadData(std::string input);
 };
 
 #endif

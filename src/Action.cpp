@@ -1,11 +1,11 @@
 #include "Action.h"
 
-FUNCACTION(goToElfforMyHouseInterior){PC.setCurrentLocation(ELFFORMYHOUSEINTERIOR);}
-FUNCACTION(goToElfforMyHouse){PC.setCurrentLocation(ELFFORMYHOUSE);}
-FUNCACTION(goToElfforTavern){PC.setCurrentLocation(ELFFORTAVERN);}
-FUNCACTION(goToElfforTavernInterior){PC.setCurrentLocation(ELFFORTAVERNINTERIOR);}
-FUNCACTION(goToElfforGate){PC.setCurrentLocation(ELFFORGATE);}
-FUNCACTION(goToRoadToElfforA){PC.setCurrentLocation(ROADTOELFFORA);}
+FUNCACTION(goToElfforMyHouseInterior){PC.setCurrentLocation(Area::ELFFORMYHOUSEINTERIOR);}
+FUNCACTION(goToElfforMyHouse){PC.setCurrentLocation(Area::ELFFORMYHOUSE);}
+FUNCACTION(goToElfforTavern){PC.setCurrentLocation(Area::ELFFORTAVERN);}
+FUNCACTION(goToElfforTavernInterior){PC.setCurrentLocation(Area::ELFFORTAVERNINTERIOR);}
+FUNCACTION(goToElfforGate){PC.setCurrentLocation(Area::ELFFORGATE);}
+FUNCACTION(goToRoadToElfforA){PC.setCurrentLocation(Area::ROADTOELFFORA);}
 
 /*
  *		Base Actions
@@ -15,49 +15,49 @@ FUNCACTION(waitUntilDay)
 {
 	if (WorldVars.IsDay == false) {
 		WorldVars.IsDay = true;
-		cout << "You wait until the sun rises.\n";
+		std::cout << "You wait until the sun rises.\n";
 	} else
-		cout << "But it already is day...\n";
+		std::cout << "But it already is day...\n";
 }
 
 FUNCACTION(waitUntilNight)
 {
 	if (WorldVars.IsDay == true) {
 		WorldVars.IsDay = false;
-		cout << "You wait until the sun sets.\n";
+		std::cout << "You wait until the sun sets.\n";
 	} else
-		cout << "But it is already night...\n";
+		std::cout << "But it is already night...\n";
 }
 
 FUNCACTION(observeAction) {
-	stringstream output;
+	std::stringstream output;
 	bool DayNightAccountedFor = false;
 	
 	display(areaToString(PC.getCurrentLocation()));
-	cout << '\n';
+	std::cout << '\n';
 	
-	if (PC.getCurrentLocation() == ELFFORMYHOUSEINTERIOR) {
+	if (PC.getCurrentLocation() == Area::ELFFORMYHOUSEINTERIOR) {
 		output << "The inside of your house.  It's small, but it's home.  ";
 		if (! WorldVars.Elffor.SwordRetrieved)
 			output << "Your sword usually hangs on the wall, but it's missing, dust outlining where it used to be.  ";
 		else
 			output << "Dust outlines the spot on the wall where your sword usually hangs.  ";
 		output << "There's a bed you can sleep in.  ";
-	} else if (PC.getCurrentLocation() == ELFFORMYHOUSE)
+	} else if (PC.getCurrentLocation() == Area::ELFFORMYHOUSE)
 		output << "Outside of your house.  It's a quaint little place.  You can see the tavern and the gate that leads out of town.  ";
-	else if (PC.getCurrentLocation() == ELFFORGATE)
+	else if (PC.getCurrentLocation() == Area::ELFFORGATE)
 		output << "The gate that leads out of the town, left open to allow free passage.  There is a sign posted on the side of the gate.  You can see the tavern and your house.  ";
-	else if (PC.getCurrentLocation() == ELFFORTAVERN)
+	else if (PC.getCurrentLocation() == Area::ELFFORTAVERN)
 		output << "Outside of the local tavern, The Infernal Woods, a small building constructed of dark wood.  It's a modest place, but it's well-kept.\
   You can see your house and the gate that leads out of town.  ";
-	else if (PC.getCurrentLocation() == ELFFORTAVERNINTERIOR) {
+	else if (PC.getCurrentLocation() == Area::ELFFORTAVERNINTERIOR) {
 		if (WorldVars.IsDay) {
 			output << "Inside The Infernal Woods.  Trent, the bartender, is ";
 			output << (WorldVars.Elffor.SwordRetrieved ? "standing behind the bar.  " : "waving at you, trying to attract your attention.  ");
 			output << "Nina is sitting at the bar, sipping a brew.  ";
 		} else
 			output << "There's no one inside, as the place is closed.  ";
-	} else if (PC.getCurrentLocation() == ROADTOELFFORA) {
+	} else if (PC.getCurrentLocation() == Area::ROADTOELFFORA) {
 		output << "Outside of the gate to Elffor.  ";
 		if (! WorldVars.RoadToElffor.BattleFought)
 			output << "There's a rustling coming from in the trees.  ";
@@ -73,7 +73,7 @@ FUNCACTION(observeAction) {
 		}
 		DayNightAccountedFor = true;
 	} else
-		cout << "Error:  the observe action was called on an area it didn't know how to handle.";
+		std::cout << "Error:  the observe action was called on an area it didn't know how to handle.";
 	
 	if (! DayNightAccountedFor)
 		output << (WorldVars.IsDay ? "It is daytime." : "It is nighttime.");
@@ -122,7 +122,7 @@ FUNCACTION(ElfforReadSign)
 FUNCACTION(ElfforEnterTavern)
 {
 	if (WorldVars.IsDay)
-		PC.setCurrentLocation(ELFFORTAVERNINTERIOR);
+		PC.setCurrentLocation(Area::ELFFORTAVERNINTERIOR);
 	else
 		display("The tavern door is locked and won't budge.\n");
 }
@@ -172,8 +172,8 @@ FUNCACTION(ElfforTavernWaitUntilNight)
 {
 	if (WorldVars.IsDay == true) {
 		dialog("You stay until closing, at which point Trent leads you to the door.  \"Sorry, friend, but you can't stay here for the night.\"");
-		cout << '\n';
-		PC.setCurrentLocation(ELFFORTAVERN);
+		std::cout << '\n';
+		PC.setCurrentLocation(Area::ELFFORTAVERN);
 		WorldVars.IsDay = false;
 	} else
 		display("But it is already night...\n");
@@ -185,7 +185,7 @@ FUNCACTION(ElfforTavernWaitUntilNight)
 
 FUNCACTION(EnterElffor)
 {
-	PC.setCurrentLocation(ELFFORGATE);
+	PC.setCurrentLocation(Area::ELFFORGATE);
 	WorldVars.RoadToElffor.BattleFought = false;
 }
 

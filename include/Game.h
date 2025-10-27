@@ -16,19 +16,19 @@ private:
 	WorldVariables WorldVars;
 	Location LocationVar;
 	
-	string defaultData;  // Stores initial game state
+	std::string defaultData;  // Stores initial game state
 	Area lastLocation;   // Track location changes
 	
 	// Save/load helpers
-	void writeSaveData(ostream& file);  // Write save data to stream
-	void readSaveData(istream& file, const string& functionName);  // Read save data from stream
+	void writeSaveData(std::ostream& file);  // Write save data to stream
+	void readSaveData(std::istream& file, const std::string& functionName);  // Read save data from stream
 	void saveDefaultData();
-	status loadDefaultData();
+	Status loadDefaultData();
 	
-	status saveGame(string &filename);
-	void saveData(string filename);
-	status loadGame(string filename);
-	void playGame(string filename = "");
+	Status saveGame(std::string &filename);
+	void saveData(std::string filename);
+	Status loadGame(std::string filename);
+	void playGame(std::string filename = "");
 public:
 	Game();
 	void run();  // Main game loop
